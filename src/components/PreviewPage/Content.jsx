@@ -78,9 +78,9 @@ const Content = ({ data }) => {
     let year = a.getFullYear();
     let month = months[a.getMonth()];
     let date = a.getDate();
-    let hour = a.getHours();
-    let min = a.getMinutes();
-    let sec = a.getSeconds();
+    let hour = a.getHours().toString().padStart(2, "0");
+    let min = a.getMinutes().toString().padStart(2, "0");
+    let sec = a.getSeconds().toString().padStart(2, "0");
     let time =
       date + "." + month + "." + year + `\n` + hour + ":" + min + ":" + sec;
     return time;

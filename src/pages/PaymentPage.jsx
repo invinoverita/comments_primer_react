@@ -66,6 +66,7 @@ const PaymentPage = () => {
     await getCommentsData({
       commentsId: commentsId,
       setNextId: setNextId,
+      commentsData: commentsData,
       setCommentsData: setCommentsData,
     });
   };
@@ -82,26 +83,10 @@ const PaymentPage = () => {
         commentsId: commentsId,
         setNextId: setNextId,
         setCommentsData: setCommentsData,
+        commentsData: commentsData,
       });
     }
   }, [commentsData]);
-
-  // const getPayment = async () => {
-  //   const successUrl = encodeURIComponent(
-  //     `http://localhost:5173/result/${shortcode}/?quantity=${payment}&filter_user_info=${additional}&email=${email}`
-  //   );
-  //   await paymentBase
-  //     .get(
-  //       `?success_url=${successUrl}&canceled_url=${document.location.href}&quantity=${payment}&filter_user_info=${additional}`
-  //     )
-  //     .then((response) => {
-  //       console.log(response);
-  //       document.location.href = `${BASE_URL}api/payment/process?success_url=${successUrl}&canceled_url=${document.location.href}&quantity=${payment}&filter_user_info=${additional}`;
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
 
   return (
     <ThemeProvider>

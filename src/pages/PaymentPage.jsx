@@ -22,6 +22,7 @@ import styled from "styled-components";
 import Content from "../components/PreviewPage/Content";
 import ProfileInfo from "../components/PreviewPage/ProfileInfo";
 import { getCommentsData, getPayment, getProfileData } from "../api/requests";
+import { useNavigate } from "react-router-dom";
 
 const StyledTextInput = styled(TextInput)`
   background: url(${mailIcon}) no-repeat scroll 10px 9px, #22272b;
@@ -49,6 +50,8 @@ const PaymentPage = () => {
   const urlData = document.location.href.split("/");
   const shortcode = urlData[urlData.length - 2];
   const commentsId = urlData[urlData.length - 1];
+
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [payment, setPayment] = useState(0);
@@ -367,17 +370,30 @@ const PaymentPage = () => {
                             lineHeight: "150%",
                           }}
                         >
-                          Бесплатно
+                          {payment > 100 || additional
+                            ? `$${
+                                additional
+                                  ? 0.03 * payment + 0.01 * payment
+                                  : 0.03 * payment
+                              }`
+                            : "Бесплатно"}
                         </Heading>
                       </Box>
                       <StyledButton
-                        onClick={() =>
-                          getPayment({
-                            additional: additional,
-                            email: email,
-                            payment: payment,
-                            shortcode: shortcode,
-                          })
+                        onClick={
+                          payment <= 100
+                            ? () => {
+                                navigate(
+                                  `/result/${shortcode}/?quantity=${payment}&filter_user_info=${additional}&email=${email}`
+                                );
+                              }
+                            : () =>
+                                getPayment({
+                                  additional: additional,
+                                  email: email,
+                                  payment: payment,
+                                  shortcode: shortcode,
+                                })
                         }
                         sx={{ width: "fit-content" }}
                       >

@@ -139,12 +139,6 @@ const ResultPage = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (commentsData.length > 0) {
-  //     getRandomComment();
-  //   }
-  // }, [commentsData]);
-
   return (
     <ThemeProvider>
       <Box
@@ -264,49 +258,58 @@ const ResultPage = () => {
                 {profileData ? (
                   <>
                     <ProfileInfo data={profileData} />
-                    <FormControl>
-                      <FormControl.Label
-                        sx={{
-                          fontWeight: 400,
-                          lineHeight: "150%",
-                          fontSize: 2,
-                          color: "rgba(255, 255, 255, 0.60)",
-                        }}
-                      >
-                        Количество победителей
-                      </FormControl.Label>
-                      <StyledTextInput
-                        type="number"
-                        placeholder="Введите число"
-                        required
-                        value={winnerAmmount}
-                        onChange={(e) => setWinnerAmmount(e.target.value)}
-                      />
-                      <StyledRandomButton
-                        onClick={() => {
-                          getRandomComment(winnerAmmount);
-                        }}
-                      >
-                        Определить
-                      </StyledRandomButton>
-                    </FormControl>
-                    {winnerArray.length > 0 ? (
+                    {commentsData ? (
                       <>
-                        <Heading
-                          sx={{
-                            fontSize: "18px",
-                            fontWeight: "700",
-                            lineHeight: "150%",
-                          }}
-                        >
-                          Победители!
-                        </Heading>
-                        {winnerArray.map((i) => {
-                          return <Text>@{i.username}</Text>;
-                        })}
+                        <FormControl>
+                          <FormControl.Label
+                            sx={{
+                              fontWeight: 400,
+                              lineHeight: "150%",
+                              fontSize: 2,
+                              color: "rgba(255, 255, 255, 0.60)",
+                            }}
+                          >
+                            Количество победителей
+                          </FormControl.Label>
+                          <StyledTextInput
+                            type="number"
+                            min="0"
+                            placeholder="Введите число"
+                            required
+                            value={winnerAmmount}
+                            onChange={(e) => setWinnerAmmount(e.target.value)}
+                          />
+                          <StyledRandomButton
+                            onClick={() => {
+                              getRandomComment(winnerAmmount);
+                            }}
+                          >
+                            Определить
+                          </StyledRandomButton>
+                        </FormControl>
+                        {winnerArray.length > 0 ? (
+                          <>
+                            <Heading
+                              sx={{
+                                fontSize: "18px",
+                                fontWeight: "700",
+                                lineHeight: "150%",
+                              }}
+                            >
+                              Победители!
+                            </Heading>
+                            {winnerArray.map((i) => {
+                              return <Text>@{i.username}</Text>;
+                            })}
+                          </>
+                        ) : (
+                          <></>
+                        )}
                       </>
                     ) : (
-                      <></>
+                      <>
+                        <Spinner sx={{ color: "white", mx: "auto" }} />
+                      </>
                     )}
                   </>
                 ) : (

@@ -21,7 +21,7 @@ import bgImage from "../assets/bg.svg";
 import Footer from "../components/Footer";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { commentsBase } from "../../../comments_react/src/api/client";
+import { commentsBase } from "../api/client";
 
 const StyledButton = styled(Button)`
   margin-top: 16px;

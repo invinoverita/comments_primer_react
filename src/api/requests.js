@@ -13,20 +13,20 @@ export const getProfileData = async ({ setProfileData, shortcode }) => {
 
 export const getCommentsData = async ({ minId, commentsId, setNextId, setCommentsData, commentsData }) => {
   try {
-    const response = await commentsBase.get(
+    let response = await commentsBase.get(
       `${commentsId}/${minId ? `?min_id=${JSON.stringify(minId)}` : ""}`
     );
     console.log(response);
-    // const newComments = response.data.response.body.comments.filter(
-    //   (comment) =>
-    //     !commentsData.some(
-    //       (existingComment) => existingComment.media_id === comment.media_id
-    //     )
-    // );
+    const newComments = response.data.response.body.comments.filter(
+      (comment) =>
+        !commentsData.some(
+          (existingComment) => existingComment.pk === comment.pk
+        )
+    );
     setNextId(response.data.response.body.next_min_id);
     setCommentsData((prevData) => [
       ...prevData,
-      ...response.data.response.body.comments,
+      ...newComments,
     ]);
   } catch (error) {
     console.log(error);
@@ -72,7 +72,6 @@ export const getCsvComments = async ({ shortcode, quantity, filter_user_info, em
   await commentsBase
     .get(`/csv_file?shortcode=${shortcode}&quantity=${quantity}&filter_user_info=${filter_user_info}&email=${email}`)
     .then((response) => {
-      console.log(response.data.split('\n'))
       setProgress(100)
       setCommentsData(response.data)
     })

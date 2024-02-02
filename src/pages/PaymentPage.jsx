@@ -27,7 +27,6 @@ import { useNavigate } from "react-router-dom";
 const StyledTextInput = styled(TextInput)`
   background: url(${mailIcon}) no-repeat scroll 10px 9px, #22272b;
   width: 100%;
-  border-color: #f6fbfd47;
   font-size: 2;
   color: white;
   input {
@@ -53,13 +52,33 @@ const PaymentPage = () => {
 
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState(false);
   const [payment, setPayment] = useState(0);
   const [additional, setAdditional] = useState(false);
 
   const [profileData, setProfileData] = useState(null);
   const [commentsData, setCommentsData] = useState([]);
   const [nextId, setNextId] = useState("");
+
+  const continueRequest = () => {
+    if (email) {
+      if (payment <= 100) {
+        navigate(
+          `/result/${shortcode}/?quantity=${payment}&filter_user_info=${additional}&email=${email}`
+        );
+      } else {
+        getPayment({
+          additional: additional,
+          email: email,
+          payment: payment,
+          shortcode: shortcode,
+        });
+      }
+    } else {
+      setEmailError(true);
+    }
+  };
 
   const getRequests = async () => {
     await getProfileData({
@@ -80,7 +99,7 @@ const PaymentPage = () => {
 
   useEffect(() => {
     console.log(commentsData);
-    if (commentsData.length < 50 && commentsData.length > 0) {
+    if (commentsData.length < 30 && commentsData.length > 0) {
       getCommentsData({
         minId: nextId,
         commentsId: commentsId,
@@ -147,16 +166,27 @@ const PaymentPage = () => {
                           Email
                         </FormControl.Label>
                         <StyledTextInput
+                          type="email"
                           placeholder="mail@domain.com"
                           value={email}
                           onChange={(e) => {
                             setEmail(e.target.value);
                           }}
+                          sx={{
+                            borderColor: `${emailError ? "red" : "#f6fbfd47"}`,
+                          }}
                         />
                         <FormControl.Caption
-                          sx={{ color: "rgba(255, 255, 255, 0.80)", pl: 3 }}
+                          sx={{
+                            color: `${
+                              emailError ? "red" : "rgba(255, 255, 255, 0.80)"
+                            }`,
+                            pl: 3,
+                          }}
                         >
-                          На нее пришлем файл с комментарием
+                          {emailError
+                            ? "Введите свой email"
+                            : "На нее пришлем файл с комментарием"}
                         </FormControl.Caption>
                       </FormControl>
                       <RadioGroup name="comments_ammount">
@@ -373,28 +403,14 @@ const PaymentPage = () => {
                           {payment > 100 || additional
                             ? `$${
                                 additional
-                                  ? 0.03 * payment + 0.01 * payment
-                                  : 0.03 * payment
+                                  ? (0.03 * payment + 0.01 * payment).toFixed(2)
+                                  : (0.03 * payment).toFixed(2)
                               }`
                             : "Бесплатно"}
                         </Heading>
                       </Box>
                       <StyledButton
-                        onClick={
-                          payment <= 100
-                            ? () => {
-                                navigate(
-                                  `/result/${shortcode}/?quantity=${payment}&filter_user_info=${additional}&email=${email}`
-                                );
-                              }
-                            : () =>
-                                getPayment({
-                                  additional: additional,
-                                  email: email,
-                                  payment: payment,
-                                  shortcode: shortcode,
-                                })
-                        }
+                        onClick={() => continueRequest()}
                         sx={{ width: "fit-content" }}
                       >
                         Продолжить
@@ -427,9 +443,9 @@ const PaymentPage = () => {
                     flexDirection: "column",
                   }}
                 >
-                  {commentsData.length >= 50 ? (
+                  {commentsData.length >= 30 ? (
                     <>
-                      <Content data={commentsData.slice(0, 50)} />
+                      <Content data={commentsData.slice(0, 30)} />
                     </>
                   ) : (
                     <>

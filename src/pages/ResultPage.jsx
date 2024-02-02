@@ -123,20 +123,70 @@ const ResultPage = () => {
     }
   }, [payment]);
 
-  const getRandomComment = (count) => {
+  // const getRandomComment = (count) => {
+  //   setWinnerArray([]);
+  //   let commentsRows = commentsData.split("\n");
+  //   commentsRows.shift();
+  //   let comments = commentsRows.map((row) => {
+  //     const [username, text, date, like] = row.split(",");
+  //     return { username, text, date, like };
+  //   });
+  //   for (let i = 0; i < count; i++) {
+  //     const randomComment =
+  //       comments[Math.floor(Math.random() * comments.length)];
+  //     setWinnerArray((prevState) => [...prevState, randomComment]);
+  //     console.log(randomComment);
+  //   }
+  // };
+
+  const getRandomComment = ({ str, count }) => {
     setWinnerArray([]);
-    let commentsRows = commentsData.split("\n");
-    commentsRows.shift();
-    let comments = commentsRows.map((row) => {
-      const [username, text, date, like] = row.split(",");
-      return { username, text, date, like };
-    });
+    const arr = [];
+    let quote = false;
+    for (let row = 0, col = 0, c = 0; c < str.length; c++) {
+      let cc = str[c],
+        nc = str[c + 1];
+      arr[row] = arr[row] || [];
+      arr[row][col] = arr[row][col] || "";
+      if (cc == '"' && quote && nc == '"') {
+        arr[row][col] += cc;
+        ++c;
+        continue;
+      }
+      if (cc == '"') {
+        quote = !quote;
+        continue;
+      }
+      if (cc == "," && !quote) {
+        ++col;
+        continue;
+      }
+      if (cc == "\r" && nc == "\n" && !quote) {
+        ++row;
+        col = 0;
+        ++c;
+        continue;
+      }
+      if (cc == "\n" && !quote) {
+        ++row;
+        col = 0;
+        continue;
+      }
+      if (cc == "\r" && !quote) {
+        ++row;
+        col = 0;
+        continue;
+      }
+      arr[row][col] += cc;
+    }
+    arr.shift();
+    console.log(arr);
     for (let i = 0; i < count; i++) {
-      const randomComment =
-        comments[Math.floor(Math.random() * comments.length)];
+      const randomComment = arr[Math.floor(Math.random() * arr.length)];
       setWinnerArray((prevState) => [...prevState, randomComment]);
       console.log(randomComment);
     }
+    return arr;
   };
 
   return (
@@ -281,7 +331,10 @@ const ResultPage = () => {
                           />
                           <StyledRandomButton
                             onClick={() => {
-                              getRandomComment(winnerAmmount);
+                              getRandomComment({
+                                str: commentsData,
+                                count: winnerAmmount,
+                              });
                             }}
                           >
                             Определить
@@ -299,7 +352,7 @@ const ResultPage = () => {
                               Победители!
                             </Heading>
                             {winnerArray.map((i) => {
-                              return <Text>@{i.username}</Text>;
+                              return <Text>@{i[0]}</Text>;
                             })}
                           </>
                         ) : (

@@ -77,7 +77,7 @@ const Content = ({ data }) => {
     ];
     let year = a.getFullYear();
     let month = months[a.getMonth()];
-    let date = a.getDate();
+    let date = a.getDate().toString().padStart(2, "0");
     let hour = a.getHours().toString().padStart(2, "0");
     let min = a.getMinutes().toString().padStart(2, "0");
     let sec = a.getSeconds().toString().padStart(2, "0");
@@ -113,16 +113,20 @@ const Content = ({ data }) => {
             </tr>
           </thead>
           <tbody>
-            {data.map((comment, index) => {
-              return (
-                <tr key={index}>
-                  <td>{timeConverter(comment.created_at)}</td>
-                  <td>@{comment.user.username}</td>
-                  <td>{comment.text}</td>
-                  <td>{comment.comment_like_count}</td>
-                </tr>
-              );
-            })}
+            {data
+              .sort((a, b) => {
+                return a.created_at - b.created_at;
+              })
+              .map((comment, index) => {
+                return (
+                  <tr key={index}>
+                    <td>{timeConverter(comment.created_at)}</td>
+                    <td>@{comment.user.username}</td>
+                    <td>{comment.text}</td>
+                    <td>{comment.comment_like_count}</td>
+                  </tr>
+                );
+              })}
           </tbody>
         </StyledTable>
       </ThemeProvider>
